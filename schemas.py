@@ -31,7 +31,7 @@ class ModelConfig(BaseModel):
     model: str
     # 0 = respuestas más deterministas, 2 = más creativas/aleatorias.
     temperature: float = Field(0.7, ge=0, le=2)
-    max_tokens: int = Field(512, gt=0)
+    max_tokens: int = Field(512, gt=0, le=4096)
 
 
 class ModelResponse(BaseModel):

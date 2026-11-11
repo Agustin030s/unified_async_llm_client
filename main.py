@@ -5,7 +5,7 @@ import asyncio
 
 from dotenv import load_dotenv
 
-from manager import PROVEEDORES_VALIDOS, AsyncLLMManager
+from manager import PROVEEDORES, AsyncLLMManager
 from schemas import ChatMessage
 
 PREGUNTA = "¿Qué es la entropía?"
@@ -21,7 +21,7 @@ async def main() -> None:
         ChatMessage(role="user", content=PREGUNTA),
     ]
 
-    for provider in PROVEEDORES_VALIDOS:
+    for provider in PROVEEDORES:
         print(f"\n{'=' * 60}\nProveedor: {provider}\n{'=' * 60}")
 
         try:
@@ -41,10 +41,14 @@ async def main() -> None:
 
         # 2) Modo streaming: imprimimos cada trozo en cuanto llega.
         print(f"\n--- Modo streaming ---\nPregunta: {PREGUNTA}\n")
-        async for token in client.stream(messages):
+        async for chunk in client.stream(messages):
+            # El error llega en un campo aparte, no mezclado con el texto.
+            if chunk.error:
+                print(f"\n[ERROR] {chunk.error}")
+                break
             # flush=True fuerza a mostrar el texto inmediatamente, sin esperar
             # a que se llene el búfer de la consola.
-            print(token, end="", flush=True)
+            print(chunk.text, end="", flush=True)
         print()
 
 

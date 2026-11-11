@@ -45,3 +45,14 @@ class ModelResponse(BaseModel):
     content: str | None = None
     provider: str
     error: str | None = None
+
+
+class StreamChunk(BaseModel):
+    """Un trozo de una respuesta en streaming.
+
+    Trae `text` o `error`, nunca los dos. Así quien consume el stream distingue
+    un error del texto del modelo revisando `chunk.error`, sin buscar prefijos.
+    """
+
+    text: str = ""
+    error: str | None = None
